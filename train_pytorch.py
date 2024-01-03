@@ -217,9 +217,9 @@ for epoch in range(1, NUM_EPOCHS+1):
             loss = loss_fn(out, label)
             loss.backward()
             optimizer.step()
-            print("epoch: "+str(epoch) + "   loss: "+str(loss.data[0]))
+            print("epoch: "+str(epoch) + "   loss: "+str(loss.item()))
             if global_step % 25 == 0:
-                loss_v = loss.data[0]
+                loss_v = loss.item()
                 print("Loss:", loss_v)
             else:
                 loss_v = 0
