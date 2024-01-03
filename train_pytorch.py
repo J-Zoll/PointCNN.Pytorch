@@ -137,8 +137,13 @@ class Classifier(nn.Module):
         return logits_mean
 
 
+# setting device on GPU if available, else CPU
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+print('Using device:', device)
+print()
+
 print("------Building model-------")
-model = Classifier().cuda()
+model = Classifier().to(device)
 print("------Successfully Built model-------")
 
 
@@ -194,7 +199,7 @@ for epoch in range(1, NUM_EPOCHS+1):
             # Lable
             label = current_label[start_idx:end_idx]
             label = torch.from_numpy(label).long()
-            label = Variable(label, requires_grad=False).cuda()
+            label = Variable(label, requires_grad=False).to(device)
             # Augment batched point clouds by rotation and jittering
             rotated_data = provider.rotate_point_cloud(current_data[start_idx:end_idx, :, :])
             jittered_data = provider.jitter_point_cloud(rotated_data) # P_Sampled
@@ -204,7 +209,7 @@ for epoch in range(1, NUM_EPOCHS+1):
 
             t0 = time.time()
             P_sampled = torch.from_numpy(P_sampled).float()
-            P_sampled = Variable(P_sampled, requires_grad=False).cuda()
+            P_sampled = Variable(P_sampled, requires_grad=False).to(device)
 
             #F_sampled = torch.from_numpy(F_sampled)
 

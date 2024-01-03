@@ -17,6 +17,9 @@ from typing import Tuple, Callable, Optional
 from util_funcs import UFloatTensor, ULongTensor
 from util_layers import Conv, SepConv, Dense, EndChannels
 
+# setting device on GPU if available, else CPU
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
 class XConv(nn.Module):
     """ Convolution over a single point and its neighbors.  """
 
@@ -66,7 +69,7 @@ class XConv(nn.Module):
             out_channels = C_out,
             kernel_size = (1, K),
             depth_multiplier = depth_multiplier
-        )).cuda()
+        )).to(device)
         
     def forward(self, x : Tuple[UFloatTensor,            # (N, P, dims)
                                 UFloatTensor,            # (N, P, K, dims)
@@ -197,7 +200,7 @@ class PointCNN(nn.Module):
         fts = self.dense(fts) if fts is not None else fts
 
         # This step takes ~97% of the time. Prime target for optimization: KNN on GPU.
-        pts_idx = self.r_indices_func(rep_pts.cpu(), pts.cpu()).cuda()
+        pts_idx = self.r_indices_func(rep_pts.cpu(), pts.cpu()).to(device)
         # -------------------------------------------------------------------------- #
 
         pts_regional = self.select_region(pts, pts_idx)
