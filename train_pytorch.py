@@ -187,7 +187,7 @@ for epoch in range(1, NUM_EPOCHS+1):
         loss_sum = 0
 
         if epoch > 1:
-            LEARNING_RATE *= decay_rate ** (global_step // decay_steps)
+            LEARNING_RATE *= DECAY_RATE ** (global_step // DECAY_STEP)
             if LEARNING_RATE > LEARNING_RATE_MIN:
                 print("NEW LEARNING RATE:", LEARNING_RATE)
                 optimizer = torch.optim.SGD(model.parameters(), lr = LEARNING_RATE, momentum = 0.9)
