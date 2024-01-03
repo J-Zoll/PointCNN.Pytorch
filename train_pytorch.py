@@ -7,6 +7,7 @@ import importlib
 import matplotlib.pyplot as plt
 import os
 import sys
+from tqdm import tqdm
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(BASE_DIR)
 sys.path.append(os.path.join(BASE_DIR, 'models'))
@@ -194,7 +195,7 @@ for epoch in range(1, NUM_EPOCHS+1):
                 print("NEW LEARNING RATE:", LEARNING_RATE)
                 optimizer = torch.optim.SGD(model.parameters(), lr = LEARNING_RATE, momentum = 0.9)
 
-        for batch_idx in range(num_batches):
+        for batch_idx in tqdm(range(num_batches)):
             start_idx = batch_idx * BATCH_SIZE
             end_idx = (batch_idx + 1) * BATCH_SIZE
 
