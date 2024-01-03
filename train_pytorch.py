@@ -48,6 +48,7 @@ parser.add_argument('--momentum', type=float, default=0.9, help='Initial learnin
 parser.add_argument('--optimizer', default='adam', help='adam or momentum [default: adam]')
 parser.add_argument('--decay_step', type=int, default=200000, help='Decay step for lr decay [default: 200000]')
 parser.add_argument('--decay_rate', type=float, default=0.7, help='Decay rate for lr decay [default: 0.8]')
+parser.add_argument('--verbose', type=bool, default=False, help="Output batch loss [default: False]")
 FLAGS = parser.parse_args()
 
 NUM_POINT = FLAGS.num_point
@@ -64,6 +65,7 @@ BN_DECAY_DECAY_RATE = 0.5
 BN_DECAY_DECAY_STEP = float(DECAY_STEP)
 BN_DECAY_CLIP = 0.99
 
+VERBOSE = FLAGS.verbose
 
 LEARNING_RATE_MIN = 0.00001
         
@@ -217,7 +219,8 @@ for epoch in range(1, NUM_EPOCHS+1):
             loss = loss_fn(out, label)
             loss.backward()
             optimizer.step()
-            print("epoch: "+str(epoch) + "   loss: "+str(loss.item()))
+            if VERBOSE:
+                print("epoch: "+str(epoch) + "   loss: "+str(loss.item()))
             if global_step % 25 == 0:
                 loss_v = loss.item()
                 print("Loss:", loss_v)
