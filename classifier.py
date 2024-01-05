@@ -35,8 +35,10 @@ class Classifier(nn.Module):
         )
 
     def forward(self, x):
+        device = x.device
+
         if type(x) != tuple:
-            x = (x, torch.zeros(size=x.size()))
+            x = (x, torch.zeros(size=x.size()).to(device))
 
         x = self.pcnn1(x)
         x = self.pcnn2(x)[1]
