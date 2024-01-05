@@ -1,7 +1,7 @@
 import torch.nn as nn
 from typing import Callable, Union, Tuple
 
-from util_funcs import UFloatTensor
+from utils.util_funcs import UFloatTensor
 
 def EndChannels(f, make_contiguous = False):
     """ Class decorator to apply 2D convolution along end channels. """

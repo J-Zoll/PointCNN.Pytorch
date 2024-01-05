@@ -1,9 +1,6 @@
 import argparse 
 import math
-import h5py
 import numpy as np
-import socket
-import importlib
 import matplotlib.pyplot as plt
 import os
 import sys
@@ -16,13 +13,11 @@ sys.path.append(os.path.join(BASE_DIR, 'utils'))
 import provider
 import math
 import random
-import data_utils
 import time
 
 import torch
 from torch import nn
 from torch.autograd import Variable
-from torch.utils.data import Dataset, DataLoader
 
 from classifier import Classifier
 
@@ -81,48 +76,22 @@ scaling_range = [0.05, 0.05, 0.05, 'g']
 scaling_range_val = [0, 0, 0, 'u']
 
 
-class modelnet40_dataset(Dataset):
-
-    def __init__(self, data, labels):
-        self.data = data
-        self.labels = labels
-
-    def __len__(self):
-        return len(self.data)
-
-    def __getitem__(self, i):
-        return self.data[i], self.labels[i]
-
-
 # setting device on GPU if available, else CPU
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print('Using device:', device)
 print()
 
-print("------Building model-------")
-model = Classifier(num_classes=NUM_CLASS).to(device)
-print("------Successfully Built model-------")
-
-
+model = Classifier().to(device)
 optimizer = torch.optim.SGD(model.parameters(), lr = 0.01, momentum = 0.9)
 loss_fn = nn.CrossEntropyLoss()
 
 global_step = 1
-
-#model_save_dir = os.path.join(CURRENT_DIR, "models", "mnist2")
-#os.makedirs(model_save_dir, exist_ok = True)
 
 TRAIN_FILES = provider.getDataFiles(os.path.join(BASE_DIR, 'data/modelnet40_ply_hdf5_2048/train_files.txt'))
 TEST_FILES = provider.getDataFiles(os.path.join(BASE_DIR, 'data/modelnet40_ply_hdf5_2048/test_files.txt'))
 
 losses = []
 accuracies = []
-
-'''
-if False:
-    latest_model = sorted(os.listdir(model_save_dir))[-1]
-    model.load_state_dict(torch.load(os.path.join(model_save_dir, latest_model)))    
-'''
 
 for epoch in range(1, NUM_EPOCHS+1):
     train_file_idxs = np.arange(0, len(TRAIN_FILES))

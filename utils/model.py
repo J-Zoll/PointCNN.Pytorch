@@ -14,8 +14,8 @@ import numpy as np
 from typing import Tuple, Callable, Optional
 
 # Internal Modules
-from util_funcs import UFloatTensor, ULongTensor
-from util_layers import Conv, SepConv, Dense, EndChannels
+from utils.util_funcs import UFloatTensor, ULongTensor
+from utils.util_layers import Conv, SepConv, Dense, EndChannels
 
 # setting device on GPU if available, else CPU
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')

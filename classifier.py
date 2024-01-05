@@ -1,8 +1,11 @@
 import torch.nn as nn
 import torch
 from utils.model import RandPointCNN
-from utils.util_funcs import knn_indices_func_gpu, knn_indices_func_cpu
+from utils.util_funcs import knn_indices_func_gpu
 from utils.util_layers import Dense
+
+import utils.util_funcs
+import utils.util_layers
 
 
 # C_in, C_out, D, N_neighbors, dilution, N_rep, r_indices_func, C_lifted = None, mlp_width = 2
@@ -14,7 +17,7 @@ AbbPointCNN = lambda a, b, c, d, e: RandPointCNN(a, b, 3, c, d, e, knn_indices_f
 
 class Classifier(nn.Module):
 
-    def __init__(self, num_classes):
+    def __init__(self, output_channels=40):
         super(Classifier, self).__init__()
 
         self.pcnn1 = AbbPointCNN(3, 32, 8, 1, -1)
@@ -28,21 +31,15 @@ class Classifier(nn.Module):
         self.fcn = nn.Sequential(
             Dense(160, 128),
             Dense(128, 64, drop_rate=0.5),
-            Dense(64, num_classes, with_bn=False, activation=None)
+            Dense(64, output_channels, with_bn=False, activation=None)
         )
 
     def forward(self, x):
+        if type(x) != tuple:
+            x = (x, torch.zeros(size=x.size()))
+
         x = self.pcnn1(x)
-        if False:
-            print("Making graph...")
-            k = make_dot(x[1])
-
-            print("Viewing...")
-            k.view()
-            print("DONE")
-
-            assert False
-        x = self.pcnn2(x)[1]  # grab features
+        x = self.pcnn2(x)[1]
 
         logits = self.fcn(x)
         logits_mean = torch.mean(logits, dim=1)
